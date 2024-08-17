@@ -25,7 +25,7 @@ namespace UserService.Data
                     .IsUnique();
                 user.HasOne(user => user.Role)
                     .WithMany(role => role.Users)
-                    .HasForeignKey(user => user.Id)
+                    .HasForeignKey(user => user.RoleId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -36,7 +36,7 @@ namespace UserService.Data
                     .IsUnique();
                 role.HasMany(role => role.Users)
                     .WithOne(user => user.Role)
-                    .HasForeignKey(user => user.Id)
+                    .HasForeignKey(user => user.RoleId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
         }

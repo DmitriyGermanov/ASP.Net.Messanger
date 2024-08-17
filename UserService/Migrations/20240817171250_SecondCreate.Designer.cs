@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserService.Data;
 
@@ -10,9 +11,11 @@ using UserService.Data;
 namespace UserService.Migrations
 {
     [DbContext(typeof(UserServiceContext))]
-    partial class UserServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20240817171250_SecondCreate")]
+    partial class SecondCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,7 +49,6 @@ namespace UserService.Migrations
             modelBuilder.Entity("UserService.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Email")
@@ -55,16 +57,11 @@ namespace UserService.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id")
                         .HasName("PK_User_Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("User");
                 });
@@ -73,7 +70,7 @@ namespace UserService.Migrations
                 {
                     b.HasOne("UserService.Models.Role", "Role")
                         .WithMany("Users")
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
