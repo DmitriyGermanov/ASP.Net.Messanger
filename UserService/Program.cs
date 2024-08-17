@@ -1,10 +1,11 @@
-
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UserService.Data;
+using UserService.Mapper;
 
 namespace UserService
 {
@@ -44,7 +45,12 @@ namespace UserService
                                                           ?? throw new NullReferenceException("Connection string can't be Null");
                             cb.Register(c => new UserServiceContext(connectionString))
                               .InstancePerDependency();
-                        
+
+                            cb.Register(ctx => new MapperConfiguration(cfg =>
+                            {
+                                cfg.AddProfile<MappingProfile>();
+                            })).AsSelf().SingleInstance();
+
                         });
 
             var app = builder.Build();
