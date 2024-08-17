@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using UserService.AuthorizationModel;
 using UserService.Data;
 using UserService.Mapper;
 
@@ -50,6 +51,9 @@ namespace UserService
                             {
                                 cfg.AddProfile<MappingProfile>();
                             })).AsSelf().SingleInstance();
+
+                            cb.RegisterType<UserAuthenticationService>().As<IUserAuthenticationService>()
+                                                                        .InstancePerLifetimeScope();
 
                         });
 

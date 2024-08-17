@@ -6,6 +6,9 @@ namespace UserService.Data
     public class UserServiceContext(string connectionString) : DbContext
     {
         private readonly string _connectionString = connectionString;
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

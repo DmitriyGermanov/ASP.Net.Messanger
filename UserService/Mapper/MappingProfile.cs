@@ -9,6 +9,7 @@ namespace UserService.Mapper
         public MappingProfile()
         {
             CreateMap<User, UserLoginModel>().ReverseMap();
+            CreateMap<Role, RoleDto>().ReverseMap();
         }
     }
 }
