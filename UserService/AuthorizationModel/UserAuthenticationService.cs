@@ -19,16 +19,10 @@ namespace UserService.AuthorizationModel
             {
                 return null;
             }
-            try
-            {
+
                 var user = _context.Users
                     .Include(u => u.Role)
                     .FirstOrDefault(u => u.Email == model.Email);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
 
             if (user == null || string.IsNullOrEmpty(user.PasswordHash))
             {
