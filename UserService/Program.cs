@@ -1,4 +1,8 @@
 
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using UserService.Data;
+
 namespace UserService
 {
     public class Program
@@ -13,6 +17,16 @@ namespace UserService
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                        .ConfigureContainer<ContainerBuilder>(cb =>
+                        {
+                            var connectionString = builder.Configuration
+                                                          .GetConnectionString("db")
+                                                          ?? throw new NullReferenceException("Connection String can't be Null");
+                            cb.Register(c => new UserServiceContext(connectionString))
+                              .InstancePerDependency();
+                        });
 
             var app = builder.Build();
 
