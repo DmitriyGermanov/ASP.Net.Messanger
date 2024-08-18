@@ -40,7 +40,7 @@ namespace UserService.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Role");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("UserService.Models.User", b =>
@@ -50,6 +50,7 @@ namespace UserService.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("PasswordHash")
@@ -66,7 +67,7 @@ namespace UserService.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("UserService.Models.User", b =>

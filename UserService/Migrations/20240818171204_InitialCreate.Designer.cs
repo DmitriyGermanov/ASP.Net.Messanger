@@ -11,7 +11,7 @@ using UserService.Data;
 namespace UserService.Migrations
 {
     [DbContext(typeof(UserServiceContext))]
-    [Migration("20240817170148_InitialCreate")]
+    [Migration("20240818171204_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -43,19 +43,24 @@ namespace UserService.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Role");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("UserService.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id")
                         .HasName("PK_User_Id");
@@ -63,14 +68,16 @@ namespace UserService.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("User");
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("UserService.Models.User", b =>
                 {
                     b.HasOne("UserService.Models.Role", "Role")
                         .WithMany("Users")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
