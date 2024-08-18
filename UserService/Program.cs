@@ -2,6 +2,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UserService.AuthorizationModel;
@@ -44,8 +45,14 @@ namespace UserService
                             var connectionString = builder.Configuration
                                                           .GetConnectionString("db")
                                                           ?? throw new NullReferenceException("Connection string can't be Null");
-                            cb.Register(c => new UserServiceContext(connectionString))
-                              .InstancePerDependency();
+
+                            cb.Register(c =>
+                            {
+                                var optionsBuilder = new DbContextOptionsBuilder<UserServiceContext>();
+                                optionsBuilder.UseMySQL(connectionString)
+                                              .UseLazyLoadingProxies();
+                                return new UserServiceContext(optionsBuilder.Options);
+                            }).InstancePerDependency();
 
                             cb.Register(ctx => new MapperConfiguration(cfg =>
                             {

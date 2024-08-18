@@ -3,21 +3,10 @@ using UserService.Models;
 
 namespace UserService.Data
 {
-    public class UserServiceContext(string connectionString) : DbContext
+    public class UserServiceContext(DbContextOptions<UserServiceContext> options) : DbContext(options)
     {
-        private readonly string _connectionString = connectionString;
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseMySQL(_connectionString
-                              ?? throw new NullReferenceException("Connection string can't be Null."))
-                              .UseLazyLoadingProxies();
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

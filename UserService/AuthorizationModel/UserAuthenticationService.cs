@@ -20,9 +20,9 @@ namespace UserService.AuthorizationModel
                 return null;
             }
 
-                var user = _context.Users
-                    .Include(u => u.Role)
-                    .FirstOrDefault(u => u.Email == model.Email);
+            var user = _context.Users
+                               .Include(u => u.Role)
+                               .FirstOrDefault(u => u.Email == model.Email);
 
             if (user == null || string.IsNullOrEmpty(user.PasswordHash))
             {
