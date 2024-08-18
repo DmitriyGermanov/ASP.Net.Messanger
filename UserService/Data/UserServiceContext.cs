@@ -23,13 +23,25 @@ namespace UserService.Data
 
             modelBuilder.Entity<Role>(role =>
             {
-                role.HasKey(r => r.Id).HasName("PK_Role_Id");
+                role.HasKey(r => r.RoleId).HasName("PK_Role_Id");
+                role.Property(r => r.RoleId)
+                    .HasConversion<int>();
+
                 role.HasIndex(r => r.Name)
                     .IsUnique();
-                role.HasMany(role => role.Users)
-                    .WithOne(user => user.Role)
-                    .HasForeignKey(user => user.RoleId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                role.HasData(
+                    new Role
+                    {
+                        RoleId = RoleId.Admin,
+                        Name = "Admin",
+                        Description = "Administrator role with full permissions"
+                    },
+                    new Role
+                    {
+                        RoleId = RoleId.User,
+                        Name = "User",
+                        Description = "Standard user role with limited permissions"
+                    });
             });
         }
     }

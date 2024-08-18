@@ -26,19 +26,13 @@ namespace UserServiceTests
 
             _service = new UserAuthenticationService(_context, passwordHasher);
 
-            var role = new Role
-            {
-                Id = Guid.NewGuid(),
-                Name = "User"
-            };
-            _context.Roles.Add(role);
+            
             _context.SaveChanges();
 
             var user = new User
             {
                 Id = Guid.NewGuid(),
                 Email = "test@example.com",
-                RoleId = role.Id 
             };
             user.PasswordHash = passwordHasher.HashPassword(user, "password123");
 

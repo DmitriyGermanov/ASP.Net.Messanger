@@ -11,8 +11,8 @@ using UserService.Data;
 namespace UserService.Migrations
 {
     [DbContext(typeof(UserServiceContext))]
-    [Migration("20240818182745_ThirdCreate")]
-    partial class ThirdCreate
+    [Migration("20240818195134_SecondCreate")]
+    partial class SecondCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,9 +27,8 @@ namespace UserService.Migrations
 
             modelBuilder.Entity("UserService.Models.Role", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
@@ -37,13 +36,27 @@ namespace UserService.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("varchar(255)");
 
-                    b.HasKey("Id")
+                    b.HasKey("RoleId")
                         .HasName("PK_Role_Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = 0,
+                            Description = "Administrator role with full permissions",
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            Description = "Standard user role with limited permissions",
+                            Name = "User"
+                        });
                 });
 
             modelBuilder.Entity("UserService.Models.User", b =>
@@ -59,8 +72,8 @@ namespace UserService.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("PK_User_Id");
