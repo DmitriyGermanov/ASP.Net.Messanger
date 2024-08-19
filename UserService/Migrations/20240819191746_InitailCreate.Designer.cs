@@ -11,8 +11,8 @@ using UserService.Data;
 namespace UserService.Migrations
 {
     [DbContext(typeof(UserServiceContext))]
-    [Migration("20240818195134_SecondCreate")]
-    partial class SecondCreate
+    [Migration("20240819191746_InitailCreate")]
+    partial class InitailCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,11 +69,16 @@ namespace UserService.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext");
+                    b.Property<byte[]>("Password")
+                        .IsRequired()
+                        .HasColumnType("longblob");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
+
+                    b.Property<byte[]>("Salt")
+                        .IsRequired()
+                        .HasColumnType("longblob");
 
                     b.HasKey("Id")
                         .HasName("PK_User_Id");

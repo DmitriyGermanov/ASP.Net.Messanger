@@ -67,12 +67,14 @@ namespace UserService.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<byte[]>("Password")
+                        .IsRequired()
                         .HasColumnType("longblob");
 
-                    b.Property<int?>("RoleId")
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<byte[]>("Salt")
+                        .IsRequired()
                         .HasColumnType("longblob");
 
                     b.HasKey("Id")
@@ -91,7 +93,8 @@ namespace UserService.Migrations
                     b.HasOne("UserService.Models.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Role");
                 });

@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace UserService.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitailCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,7 +36,8 @@ namespace UserService.Migrations
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false),
                     Email = table.Column<string>(type: "varchar(255)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "longtext", nullable: true),
+                    Password = table.Column<byte[]>(type: "longblob", nullable: false),
+                    Salt = table.Column<byte[]>(type: "longblob", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -48,6 +51,15 @@ namespace UserService.Migrations
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "RoleId", "Description", "Name" },
+                values: new object[,]
+                {
+                    { 0, "Administrator role with full permissions", "Admin" },
+                    { 1, "Standard user role with limited permissions", "User" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Roles_Name",

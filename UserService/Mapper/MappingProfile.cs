@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using UserService.DTOs;
 using UserService.Models;
 
@@ -8,8 +9,7 @@ namespace UserService.Mapper
     {
         public MappingProfile()
         {
-            CreateMap<User, UserLoginModel>().ReverseMap();
-            CreateMap<Role, RoleDto>().ReverseMap();
+            CreateMap<UserModel, UserLoginModel>().ReverseMap();
         }
     }
 }
