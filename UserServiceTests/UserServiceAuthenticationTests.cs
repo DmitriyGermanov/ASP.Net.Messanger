@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 using UserService.AuthorizationModel;
 using UserService.Data;
 using UserService.DTOs;
 using UserService.Models;
-using ZstdSharp.Unsafe;
 
 namespace UserServiceTests
 {
@@ -12,7 +12,7 @@ namespace UserServiceTests
     public class UserAuthenticationServiceTests
     {
         private UserServiceContext? _context;
-        private UserAuthenticationService? _service;
+        private IUserAuthenticationService? _service;
 
         [TestInitialize]
         public void Setup()
@@ -22,21 +22,32 @@ namespace UserServiceTests
                 .Options;
 
             _context = new UserServiceContext(options);
+            _service = new UserAuthenticationService(_context);
 
-            var passwordHasher = new PasswordHasher<User>();
+            var role = _context.Roles.FirstOrDefault(r => r.RoleId == RoleId.Admin);
 
-            _service = new UserAuthenticationService(_context, passwordHasher);
-
+            if (role == null)
+            {
+                role = new Role
+                {
+                    RoleId = RoleId.Admin,
+                    Name = "Admin"
+                };
+                _context.Roles.Add(role);
+                _context.SaveChanges();
+            }
 
             var user = new User
             {
                 Id = Guid.NewGuid(),
                 Email = "test@example.com",
+                Salt = new byte[16],
+                RoleId = role.RoleId, 
+                Role = role 
             };
 
-            user.Role = _context.Roles.FirstOrDefault();
-
-            user.PasswordHash = passwordHasher.HashPassword(user, "password123");
+            var data = Encoding.ASCII.GetBytes("password123").Concat(user.Salt).ToArray();
+            user.Password = SHA512.HashData(data);
 
             _context.Users.Add(user);
             _context.SaveChanges();
@@ -50,15 +61,15 @@ namespace UserServiceTests
                 Email = "test@example.com",
                 Password = "password123"
             };
-
+            
             var result = _service?.Authenticate(loginModel);
-            Console.WriteLine(result.Role);
+
             Assert.IsNotNull(result);
             Assert.AreEqual(loginModel.Email, result.Email);
         }
 
         [TestMethod]
-        public void Authenticate_InvalidPassword_ReturnsNull()
+        public void Authenticate_InvalidPassword_ReturnsException()
         {
             var loginModel = new UserLoginModel
             {
@@ -66,9 +77,7 @@ namespace UserServiceTests
                 Password = "wrongpassword"
             };
 
-            var result = _service?.Authenticate(loginModel);
-
-            Assert.IsNull(result);
+            Assert.ThrowsException<Exception>(() => _service?.Authenticate(loginModel));
         }
 
         [TestMethod]
