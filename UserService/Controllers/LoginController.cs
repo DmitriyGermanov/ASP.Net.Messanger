@@ -18,7 +18,7 @@ namespace UserService.Controllers
         private readonly IUserAuthenticationService _userAuthenticationService = userAuthenticationService;
 
         [AllowAnonymous]
-        [HttpPost("user/login")]
+        [HttpPost("users/login")]
         public ActionResult Login([FromBody] UserLoginModel userLoginModel)
         {
             var user = _userAuthenticationService.Authenticate(userLoginModel);
