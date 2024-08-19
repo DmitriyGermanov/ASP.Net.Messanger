@@ -4,6 +4,7 @@ using UserService.AuthorizationModel;
 using UserService.Data;
 using UserService.DTOs;
 using UserService.Models;
+using ZstdSharp.Unsafe;
 
 namespace UserServiceTests
 {
@@ -26,14 +27,15 @@ namespace UserServiceTests
 
             _service = new UserAuthenticationService(_context, passwordHasher);
 
-            
-            _context.SaveChanges();
 
             var user = new User
             {
                 Id = Guid.NewGuid(),
                 Email = "test@example.com",
             };
+
+            user.Role = _context.Roles.FirstOrDefault();
+
             user.PasswordHash = passwordHasher.HashPassword(user, "password123");
 
             _context.Users.Add(user);
@@ -50,7 +52,7 @@ namespace UserServiceTests
             };
 
             var result = _service?.Authenticate(loginModel);
-
+            Console.WriteLine(result.Role);
             Assert.IsNotNull(result);
             Assert.AreEqual(loginModel.Email, result.Email);
         }
