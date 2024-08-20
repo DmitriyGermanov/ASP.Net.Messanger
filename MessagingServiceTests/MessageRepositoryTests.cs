@@ -22,7 +22,9 @@ namespace MessagingServiceTests
             _context = new MessageContext(_dbContextOptions);
             _messageRepository = new MessageRepository(_context);
             var testMessage1 = GetTestMessage();
-            var testMessage2 = GetTestMessage();    
+            var testMessage2 = GetTestMessage();  
+            
+            testMessage2.ReceiverId = testMessage1.ReceiverId;
 
             _context.Add(testMessage1);
             _context.Add(testMessage2);
@@ -35,16 +37,31 @@ namespace MessagingServiceTests
             var message = GetTestMessage();
             _messageRepository?.AddMessage(message);
 
-            var returnMessage = _context?.Messages.FirstOrDefault(message => message.Id == message.Id);
+            var returnMessage = _context?.Messages.FirstOrDefault(mess => mess.Id == message.Id);
 
             Assert.IsNotNull(returnMessage);
             Assert.AreEqual(returnMessage.Content, message.Content);
         }
 
+        [TestMethod]
+        public void GetMessageByUser_ShouldReturnMessages()
+        {
+            if (_context == null)
+                Assert.Fail("_context can't be Null.");
+            if (_messageRepository == null)
+                Assert.Fail("_messageRepository can't be Null.");
+
+            var receiver = _context.Messages.Select(message => message.ReceiverId).First();
+            var messages = _messageRepository.GetMessagesByUser(receiver);
+
+            Assert.IsNotNull(messages);
+        }
+
         private Message GetTestMessage() => new()
         {
-            SenderId = new Guid(),
-            ReceiverId = new Guid(),
+            Id = Guid.NewGuid(),
+            SenderId = Guid.NewGuid(),
+            ReceiverId = Guid.NewGuid(),
             Content = "Тестовое сообщение" + DateTime.Now.ToString(),
             SentAt = DateTime.UtcNow,
             IsReceived = false
