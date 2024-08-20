@@ -28,13 +28,13 @@ namespace UserService.Controllers
                 if (userLoginModel.Email == null || userLoginModel.Password == null)
                     return BadRequest("Email or Password can't be null.");
 
-                var roleId = _userRepository.UserCheck(userLoginModel.Email, userLoginModel.Password);
+                var (userId, roleId) = _userRepository.UserCheck(userLoginModel.Email, userLoginModel.Password);
                 var role = _userRepository.GetRoleById(roleId);
 
                 var user = _mapper.Map<UserModel>(userLoginModel);
-                user.RoleName = role.Name;
+                user.RoleName = role.Name ?? "User";
 
-                var token = GenerateToken(user);
+                var token = GenerateToken(userId, user.RoleName);
 
                 return Ok(token);
             }
@@ -53,14 +53,13 @@ namespace UserService.Controllers
 
             try
             {
-                _userRepository.UserAdd(loginModel.Email, loginModel.Password, RoleId.Admin);
+                var userId = _userRepository.UserAdd(loginModel.Email, loginModel.Password, RoleId.Admin);
+                return CreatedAtAction(nameof(AddAdmin), new { id = userId }, loginModel);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
-
-            return CreatedAtAction(nameof(AddAdmin), new { email = loginModel.Email }, loginModel);
         }
 
         [HttpPost("users/addUser")]
@@ -72,24 +71,23 @@ namespace UserService.Controllers
 
             try
             {
-                _userRepository.UserAdd(loginModel.Email, loginModel.Password, RoleId.User);
+                var userId = _userRepository.UserAdd(loginModel.Email, loginModel.Password, RoleId.User);
+                return CreatedAtAction(nameof(AddAdmin), new { id = userId }, loginModel);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
-
-            return CreatedAtAction(nameof(AddAdmin), new { email = loginModel.Email }, loginModel);
         }
 
-        [HttpDelete("users/deleteUser/{email}")]
+        [HttpDelete("users/deleteUser/{id:guid}")]
         [Authorize(Roles = "Admin")]
-        public ActionResult DeleteUserByEmail(string email)
+        public ActionResult DeleteUserById(Guid id)
         {
             try
             {
-                _userRepository.DeleteUserByEmail(email);
-                return Ok(email);
+                _userRepository.DeleteUserById(id);
+                return Ok(id);
             }
             catch (Exception ex)
             {
@@ -111,15 +109,15 @@ namespace UserService.Controllers
             }
         }
 
-        private string GenerateToken(UserModel user)
+        private string GenerateToken(Guid userId, string roleName)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]
                                            ?? throw new NullReferenceException("Key can't be Null")));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Email),
-                new Claim(ClaimTypes.Role, user.RoleName ?? "User")
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim(ClaimTypes.Role, roleName ?? "User")
             };
 
             var token = new JwtSecurityToken(
@@ -133,6 +131,3 @@ namespace UserService.Controllers
         }
     }
 }
-
-
-

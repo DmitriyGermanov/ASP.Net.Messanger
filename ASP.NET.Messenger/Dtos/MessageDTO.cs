@@ -3,9 +3,9 @@
     public class MessageDTO
     {
         public Guid Id { get; set; }
-        public string Content { get; set; } = string.Empty;
+        public string Content { get; set; } = String.Empty; 
         public DateTime SentAt { get; set; }
-        public string? SenderEmail { get; set; }
-        public string? ReceiverEmail { get; set; }
+        public Guid SenderId { get; set; }
+        public Guid ReceiverId { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,12 +8,12 @@ using UserService.Models;
 
 namespace UserService.Repo
 {
-    public class UserRepository(UserServiceContext context, IHttpContextAccessor httpContextAccessor) : IUserRepository
+    public partial class UserRepository(UserServiceContext context, IHttpContextAccessor httpContextAccessor) : IUserRepository
     {
         private readonly UserServiceContext _context = context;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
-        public void UserAdd(string email, string password, RoleId roleID)
+        public Guid UserAdd(string email, string password, RoleId roleID)
         {
             try
             {
@@ -27,9 +26,10 @@ namespace UserService.Repo
 
                 var user = CreateUser(email, password, roleID);
 
-                
                 _context.Users.Add(user);
                 _context.SaveChanges();
+
+                return user.Id;
             }
             catch
             {
@@ -37,7 +37,7 @@ namespace UserService.Repo
             }
         }
 
-        public RoleId UserCheck(string email, string password)
+        public (Guid userId, RoleId roleId) UserCheck(string email, string password)
         {
             var user = _context.Users.FirstOrDefault(user => user.Email == email)
                            ?? throw new Exception("User not found.");
@@ -45,28 +45,26 @@ namespace UserService.Repo
             var bpassword = SHA512.HashData(data);
 
             if (user.Password.SequenceEqual(bpassword))
-                return user.RoleId;
+                return (user.Id, user.RoleId);
             else
                 throw new Exception("Wrong password.");
         }
 
-        public string GetEmailFromToken()
+        public Guid GetUserIdFromToken()
         {
             var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null)
-                throw new UnauthorizedAccessException("User is not authenticated.");
-
-            return userIdClaim.Value;
+            return userIdClaim == null 
+                                  ? throw new UnauthorizedAccessException("User is not authenticated.") : Guid.Parse(userIdClaim.Value);
         }
 
-        public void DeleteUserByEmail(string email)
+        public void DeleteUserById(Guid userId)
         {
             var currentUser = GetCurrentUser();
 
-            if (currentUser.Email.Equals(email, StringComparison.OrdinalIgnoreCase))
+            if (currentUser.Id == userId)
                 throw new InvalidOperationException("Admin cannot delete themselves.");
 
-            var user = _context.Users.FirstOrDefault(u => u.Email == email)
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId)
                                    ?? throw new Exception("User not found.");
 
             _context.Users.Remove(user);
@@ -80,20 +78,14 @@ namespace UserService.Repo
 
         public Role GetRoleById(RoleId roleId)
         {
-            try
-            {
-                return _context.Roles.FirstOrDefault(role => role.RoleId == roleId)
-                                     ?? throw new Exception("Role not found.");
-            }
-            catch
-            {
-                throw;
-            }
+            return _context.Roles.FirstOrDefault(role => role.RoleId == roleId)
+                   ?? throw new Exception("Role not found.");
         }
+
         private User GetCurrentUser()
         {
-            var userEmail = GetEmailFromToken();
-            var user = _context.Users.FirstOrDefault(u => u.Email.Equals(userEmail));
+            var userId = GetUserIdFromToken();
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
 
             return user ?? throw new Exception("Current user not found.");
         }
@@ -102,14 +94,15 @@ namespace UserService.Repo
         {
             var user = new User
             {
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 Email = email,
                 Password = HashPassword(password, out var salt),
-                Salt = salt
+                Salt = salt,
+                RoleId = roleID
             };
 
-            var role = _context.Roles.SingleOrDefault(r => r.RoleId == roleID) 
-                                                    ?? throw new InvalidOperationException("Role not found.");
+            var role = _context.Roles.SingleOrDefault(r => r.RoleId == roleID)
+                       ?? throw new InvalidOperationException("Role not found.");
             user.Role = role;
 
             return user;
@@ -117,7 +110,7 @@ namespace UserService.Repo
 
         private static void ValidateEmail(string email)
         {
-            var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            var emailRegex = MyRegex();
             if (!emailRegex.IsMatch(email))
             {
                 throw new ArgumentException("Incorrect email address.");
@@ -131,10 +124,11 @@ namespace UserService.Repo
                 var count = _context.Users.Count(x => x.RoleId == RoleId.Admin);
                 if (count > 0)
                 {
-                    throw new Exception("Only one admin can be setted.");
+                    throw new Exception("Only one admin can be set.");
                 }
             }
         }
+
         private static byte[] HashPassword(string password, out byte[] salt)
         {
             salt = new byte[16];
@@ -142,5 +136,8 @@ namespace UserService.Repo
             var data = Encoding.ASCII.GetBytes(password).Concat(salt).ToArray();
             return SHA512.HashData(data);
         }
+
+        [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
+        private static partial Regex MyRegex();
     }
 }
