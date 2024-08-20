@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ASP.NET.Messenger\MessagingService.csproj" />
+    <ProjectReference Include="..\MessagingService\MessagingService.csproj" />
   </ItemGroup>
 
   <ItemGroup>
