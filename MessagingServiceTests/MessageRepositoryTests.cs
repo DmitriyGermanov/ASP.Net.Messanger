@@ -12,10 +12,8 @@ namespace MessagingServiceTests
         private DbContextOptions<MessageContext>? _dbContextOptions;
         private MessageRepository? _messageRepository;
 
-
-
         [TestInitialize]
-        public void Setup(Message testMessage)
+        public void Setup()
         {
             _dbContextOptions = new DbContextOptionsBuilder<MessageContext>()
            .UseInMemoryDatabase(databaseName: "UserServiceTestDatabase")
@@ -37,13 +35,14 @@ namespace MessagingServiceTests
             var message = GetTestMessage();
             _messageRepository?.AddMessage(message);
 
-            Assert.IsNotNull(message);
-            Assert.AreEqual(message.Id, message.Id);
+            var returnMessage = _context?.Messages.FirstOrDefault(message => message.Id == message.Id);
+
+            Assert.IsNotNull(returnMessage);
+            Assert.AreEqual(returnMessage.Content, message.Content);
         }
 
         private Message GetTestMessage() => new()
         {
-            Id = new Guid(),
             SenderId = new Guid(),
             ReceiverId = new Guid(),
             Content = "Тестовое сообщение" + DateTime.Now.ToString(),
