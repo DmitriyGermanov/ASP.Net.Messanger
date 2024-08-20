@@ -1,0 +1,119 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/users/login",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7088
+        }
+      ],
+      "UpstreamPathTemplate": "/users/login",
+      "UpstreamHttpMethod": [ "Get" ],
+      "SwaggerKey": "users"
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/addAdmin",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7088
+        }
+      ],
+      "UpstreamPathTemplate": "/users/addAdmin",
+      "UpstreamHttpMethod": [ "Post" ],
+      "SwaggerKey": "users"
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/addUser",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7088
+        }
+      ],
+      "UpstreamPathTemplate": "/users/addUser",
+      "UpstreamHttpMethod": [ "Post" ],
+      "SwaggerKey": "users\""
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/deleteUser",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7088
+        }
+      ],
+      "UpstreamPathTemplate": "/users/deleteUser",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "SwaggerKey": "users"
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/getAllUsers",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7088
+        }
+      ],
+      "UpstreamPathTemplate": "/users/getAllUsers",
+      "UpstreamHttpMethod": [ "Get" ],
+      "SwaggerKey": "users"
+    },
+    {
+      "DownstreamPathTemplate": "/api/messages/getAllMessages",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7167
+        }
+      ],
+      "UpstreamPathTemplate": "/messages/getAllMessages",
+      "UpstreamHttpMethod": [ "Get" ],
+      "SwaggerKey": "messages"
+    },
+    {
+      "DownstreamPathTemplate": "/api/messages/addMessage",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7167
+        }
+      ],
+      "UpstreamPathTemplate": "/messages/addMessage",
+      "UpstreamHttpMethod": [ "Post" ],
+      "SwaggerKey": "messages"
+    }
+  ],
+  "SwaggerEndPoints": [
+       {
+      "Key": "messages",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "Storages API",
+          "Version": "v1",
+          "Url": "https://localhost:7167/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "users",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "Products and Storages Connector",
+          "Version": "v1",
+          "Url": "https://localhost:7088/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserServiceTests", "UserSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingServiceTests", "MessagingServiceTests\MessagingServiceTests.csproj", "{6438D312-E05A-4EC9-B8A9-1848B6F0EB86}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcelotGateWay", "OcelotGateWay\OcelotGateWay.csproj", "{9FA3EE66-CAC9-40B7-A6DC-B8C3A3594CEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{6438D312-E05A-4EC9-B8A9-1848B6F0EB86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6438D312-E05A-4EC9-B8A9-1848B6F0EB86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6438D312-E05A-4EC9-B8A9-1848B6F0EB86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FA3EE66-CAC9-40B7-A6DC-B8C3A3594CEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FA3EE66-CAC9-40B7-A6DC-B8C3A3594CEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FA3EE66-CAC9-40B7-A6DC-B8C3A3594CEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FA3EE66-CAC9-40B7-A6DC-B8C3A3594CEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
