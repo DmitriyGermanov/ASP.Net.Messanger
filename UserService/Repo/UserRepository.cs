@@ -23,6 +23,8 @@ namespace UserService.Repo
                     throw new ArgumentException("This email is already used.");
 
                 CheckAdminRole(roleID);
+                
+                ValidatePassword(password);
 
                 var user = CreateUser(email, password, roleID);
 
@@ -73,7 +75,7 @@ namespace UserService.Repo
 
         public IEnumerable<UserModel> GetUsers()
         {
-            return [.. _context.Users.Select(user => new UserModel { Email = user.Email, RoleName = user.Role.Name })];
+            return [.. _context.Users.Select(user => new UserModel { Id = user.Id, Email = user.Email, RoleName = user.Role.Name })];
         }
 
         public Role GetRoleById(RoleId roleId)
@@ -139,5 +141,28 @@ namespace UserService.Repo
 
         [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
         private static partial Regex MyRegex();
+
+        private static void ValidatePassword(string password)
+        {
+            if (password.Length < 8)
+            {
+                throw new ArgumentException("Password must be at least 8 characters long.");
+            }
+
+            if (!password.Any(char.IsUpper))
+            {
+                throw new ArgumentException("Password must contain at least one uppercase letter.");
+            }
+
+            if (!password.Any(char.IsLower))
+            {
+                throw new ArgumentException("Password must contain at least one lowercase letter.");
+            }
+
+            if (!password.Any(char.IsDigit))
+            {
+                throw new ArgumentException("Password must contain at least one digit.");
+            }
+        }
     }
 }

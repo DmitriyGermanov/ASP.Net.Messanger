@@ -72,7 +72,7 @@ namespace UserService.Controllers
             try
             {
                 var userId = _userRepository.UserAdd(loginModel.Email, loginModel.Password, RoleId.User);
-                return CreatedAtAction(nameof(AddAdmin), new { id = userId }, loginModel);
+                return CreatedAtAction(nameof(AddAdmin), new { id = userId }, userId);
             }
             catch (Exception ex)
             {

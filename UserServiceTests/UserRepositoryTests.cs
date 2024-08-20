@@ -55,7 +55,7 @@ namespace UserServiceTests
             {
                 Id = Guid.NewGuid(),
                 Email = "admin@test.com",
-                Password = HashPassword("admin123", out var salt),
+                Password = HashPassword("admin123Password", out var salt),
                 Role = adminRole,
                 Salt = salt
             };
@@ -68,7 +68,7 @@ namespace UserServiceTests
         public void UserAdd_ShouldAddUser()
         {
             var email = "user@test.com";
-            var password = "password123";
+            var password = "Password123";
 
             _repository?.UserAdd(email, password, RoleId.User);
 
