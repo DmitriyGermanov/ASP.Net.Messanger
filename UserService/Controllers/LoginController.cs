@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using UserService.DTOs;
 using UserService.Models;
 using UserService.Repo;
+using UserService.rsa;
 
 namespace UserService.Controllers
 {
@@ -111,9 +113,8 @@ namespace UserService.Controllers
 
         private string GenerateToken(Guid userId, string roleName)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]
-                                           ?? throw new NullReferenceException("Key can't be Null")));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var key = new RsaSecurityKey(RSATools.GetPrivateKey());
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature);
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),

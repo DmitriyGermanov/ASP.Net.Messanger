@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Cryptography;
 using System.Text;
 using UserService.Data;
 using UserService.Mapper;
 using UserService.Repo;
+using UserService.rsa;
 
 namespace UserService
 {
@@ -16,6 +18,7 @@ namespace UserService
     {
         public static void Main(string[] args)
         {
+        
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -61,8 +64,7 @@ namespace UserService
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]
-                                                                    ?? throw new NullReferenceException("Key can't be Null")))
+                        IssuerSigningKey = new RsaSecurityKey(RSATools.GetPublicKey())
                     };
                 });
 

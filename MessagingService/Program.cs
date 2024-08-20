@@ -5,6 +5,7 @@ using AutoMapper;
 using MessagingService.Data;
 using MessagingService.Mapper;
 using MessagingService.Repo;
+using MessagingService.rsa;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -61,8 +62,7 @@ namespace ASP.NET.Messenger
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]
-                                                                    ?? throw new NullReferenceException("Key can't be Null")))
+                        IssuerSigningKey = new RsaSecurityKey(RSATools.GetPublicKey())
                     };
                 });
 
