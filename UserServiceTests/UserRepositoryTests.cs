@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Moq;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using UserService.Data;
