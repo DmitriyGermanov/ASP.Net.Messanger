@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -20,18 +21,19 @@ namespace UserService.Repo
                 ValidateEmail(email);
 
                 if (_context.Users.Any(user => user.Email.Equals(email, StringComparison.OrdinalIgnoreCase)))
-                    throw new ArgumentException("This email already used.");
+                    throw new ArgumentException("This email is already used.");
 
                 CheckAdminRole(roleID);
 
                 var user = CreateUser(email, password, roleID);
 
+                
                 _context.Users.Add(user);
                 _context.SaveChanges();
             }
             catch
             {
-                throw ;
+                throw;
             }
         }
 
@@ -80,7 +82,7 @@ namespace UserService.Repo
         {
             try
             {
-                return _context.Roles.FirstOrDefault(role => role.RoleId == roleId) 
+                return _context.Roles.FirstOrDefault(role => role.RoleId == roleId)
                                      ?? throw new Exception("Role not found.");
             }
             catch
@@ -90,25 +92,25 @@ namespace UserService.Repo
         }
         private User GetCurrentUser()
         {
-            var userEmail= GetEmailFromToken();
+            var userEmail = GetEmailFromToken();
             var user = _context.Users.FirstOrDefault(u => u.Email.Equals(userEmail));
-                                   
+
             return user ?? throw new Exception("Current user not found.");
         }
 
-        private static User CreateUser(string email, string password, RoleId roleID)
+        private User CreateUser(string email, string password, RoleId roleID)
         {
             var user = new User
             {
+                Id = new Guid(),
                 Email = email,
-                RoleId = roleID,
-                Salt = new byte[16]
+                Password = HashPassword(password, out var salt),
+                Salt = salt
             };
 
-            new Random().NextBytes(user.Salt);
-
-            var data = Encoding.ASCII.GetBytes(password).Concat(user.Salt).ToArray();
-            user.Password = SHA512.HashData(data);
+            var role = _context.Roles.SingleOrDefault(r => r.RoleId == roleID) 
+                                                    ?? throw new InvalidOperationException("Role not found.");
+            user.Role = role;
 
             return user;
         }
@@ -132,6 +134,13 @@ namespace UserService.Repo
                     throw new Exception("Only one admin can be setted.");
                 }
             }
+        }
+        private static byte[] HashPassword(string password, out byte[] salt)
+        {
+            salt = new byte[16];
+            new Random().NextBytes(salt);
+            var data = Encoding.ASCII.GetBytes(password).Concat(salt).ToArray();
+            return SHA512.HashData(data);
         }
     }
 }

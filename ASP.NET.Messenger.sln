@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessagingService", "ASP.NET
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserService", "UserService\UserService.csproj", "{00050DD7-6B25-48DE-A3F2-B5CDA058424F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserServiceTests", "UserServiceTests\UserServiceTests.csproj", "{30FC060B-6A20-4F2E-8F2C-35DDBD011308}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserServiceTests", "UserServiceTests\UserServiceTests.csproj", "{30FC060B-6A20-4F2E-8F2C-35DDBD011308}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
