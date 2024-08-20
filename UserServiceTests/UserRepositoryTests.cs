@@ -27,6 +27,7 @@ namespace UserServiceTests
             _context = new UserServiceContext(_dbContextOptions);
             _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
             _repository = new UserRepository(_context, _httpContextAccessorMock.Object);
+
             var adminRole = _context.Roles.FirstOrDefault(r => r.RoleId == RoleId.Admin);
             if (adminRole == null)
             {
