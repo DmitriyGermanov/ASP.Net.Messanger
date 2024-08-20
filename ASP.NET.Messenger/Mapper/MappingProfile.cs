@@ -8,7 +8,7 @@ namespace MessagingService.Mapper
     {
         public MappingProfile()
         {
-            CreateMap<Message, MessageDTO>().ReverseMap();
+            CreateMap<Message, SendMessageRequestDTO>().ReverseMap();
         }
     }
 }
