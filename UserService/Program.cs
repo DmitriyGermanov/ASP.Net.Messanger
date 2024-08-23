@@ -49,7 +49,7 @@ namespace UserService
                             Id = "Bearer"
                         }
                     },
-                    new string[]{ }
+                    Array.Empty<string>()
                 }
                 });
             });
